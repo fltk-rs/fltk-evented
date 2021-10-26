@@ -32,8 +32,14 @@ fn main() {
         b.set_color(Color::Cyan);
     });
 
-    but.on_click(|_| {
+    but.on_click(|b| {
         println!("Clicked");
+        b.set_label_color(Color::White);
+    });
+
+    but.on_release(move |b| {
+        wind.set_label("Button Released!");
+        b.set_label_color(Color::Black);
     });
 
     app.run().unwrap();
