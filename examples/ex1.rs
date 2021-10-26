@@ -1,11 +1,12 @@
-use fltk::{enums::Color, prelude::*, app, window, button};
+use fltk::{enums::{Color, FrameType}, prelude::*, app, window, button};
 use fltk_evented::Listener;
 
 fn main() {
-    let app = app::App::default().with_scheme(app::Scheme::Gtk);
+    let app = app::App::default();
     let mut wind = window::Window::default().with_size(400, 300);
     wind.set_color(Color::White);
     let mut but: Listener<_> = button::Button::new(160, 210, 80, 35, "Click me!").into();
+    but.set_frame(FrameType::FlatBox);
     but.set_color(Color::Cyan);
     but.set_selection_color(Color::Cyan.darker());
     but.clear_visible_focus();
