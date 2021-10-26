@@ -1,4 +1,9 @@
-use fltk::{enums::{Color, FrameType}, prelude::*, app, window, button};
+use fltk::{
+    app, button,
+    enums::{Color, FrameType},
+    prelude::*,
+    window,
+};
 use fltk_evented::Listener;
 
 fn main() {
