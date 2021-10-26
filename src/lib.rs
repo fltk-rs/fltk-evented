@@ -69,6 +69,12 @@ pub struct Listener<T: WidgetBase + WidgetExt> {
     events: Rc<RefCell<EventMap<T>>>,
 }
 
+impl<T: WidgetBase + WidgetExt + Default + 'static> From<T> for Listener<T> {
+    fn from(t: T) -> Self {
+        Self::from_widget(t)
+    }
+}
+
 impl<T: WidgetBase + WidgetExt> std::ops::Deref for Listener<T> {
     type Target = T;
 
@@ -499,8 +505,3 @@ impl<T: WidgetBase + WidgetExt + Default + 'static> Listener<T> {
     }
 }
 
-impl<T: WidgetBase + WidgetExt + Default + 'static> From<T> for Listener<T> {
-    fn from(t: T) -> Self {
-        Self::from_widget(t)
-    }
-}
