@@ -139,207 +139,151 @@ impl<T: WidgetBase + WidgetExt + Default + 'static> Listener<T> {
         Self::default().size_of_parent().center_of_parent()
     }
 
-    /// What the widget should do on hover
-    pub fn on_hover(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::Enter.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on leave
-    pub fn on_leave(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::Leave.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on click
-    pub fn on_click(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::Push.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on release
-    pub fn on_release(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::Released.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on drag
-    pub fn on_drag(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::Drag.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on focus
-    pub fn on_focus(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::Focus.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on unfocus
-    pub fn on_unfocus(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::Unfocus.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on keydown
-    pub fn on_keydown(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::KeyDown.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on keyup
-    pub fn on_keyup(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::KeyUp.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on close
-    pub fn on_close(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::Close.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on move
-    pub fn on_move(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::Move.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on shortcut
-    pub fn on_shortcut(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::Shortcut.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on deactivate
-    pub fn on_deactivate(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::Deactivate.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on activate
-    pub fn on_activate(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::Activate.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on hide
-    pub fn on_hide(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::Hide.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on show
-    pub fn on_show(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::Show.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on paste
-    pub fn on_paste(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::Paste.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on selection_clear
-    pub fn on_selection_clear(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::SelectionClear.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on mousewheel
-    pub fn on_mousewheel(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::MouseWheel.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on dnd_enter
-    pub fn on_dnd_enter(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::DndEnter.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on dnd_drag
-    pub fn on_dnd_drag(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::DndDrag.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on dnd_leave
-    pub fn on_dnd_leave(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::DndLeave.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on dnd_release
-    pub fn on_dnd_release(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::DndRelease.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on screen_config_chaged
-    pub fn on_screen_config_chaged(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::ScreenConfigChanged.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on fullscreen
-    pub fn on_fullscreen(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::Fullscreen.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on zoom_gesture
-    pub fn on_zoom_gesture(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::ZoomGesture.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on zoom
-    pub fn on_zoom(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::ZoomEvent.bits(), Some(Box::new(cb)));
-    }
-
-    /// What the widget should do on resize
-    pub fn on_resize(&mut self, cb: impl FnMut(&mut T) + 'static) {
-        self.events
-            .borrow_mut()
-            .insert(Event::Resize.bits(), Some(Box::new(cb)));
-    }
-
     /// What the widget should do on a custom event
     pub fn on(&mut self, ev: Event, cb: impl FnMut(&mut T) + 'static) {
         self.events
             .borrow_mut()
             .insert(ev.bits(), Some(Box::new(cb)));
+    }
+
+    /// What the widget should do on hover
+    pub fn on_hover(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::Enter, cb);
+    }
+
+    /// What the widget should do on leave
+    pub fn on_leave(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::Leave, cb);
+    }
+
+    /// What the widget should do on click
+    pub fn on_click(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::Push, cb);
+    }
+
+    /// What the widget should do on release
+    pub fn on_release(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::Released, cb);
+    }
+
+    /// What the widget should do on drag
+    pub fn on_drag(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::Drag, cb);
+    }
+
+    /// What the widget should do on focus
+    pub fn on_focus(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::Focus, cb);
+    }
+
+    /// What the widget should do on unfocus
+    pub fn on_unfocus(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::Unfocus, cb);
+    }
+
+    /// What the widget should do on keydown
+    pub fn on_keydown(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::KeyDown, cb);
+    }
+
+    /// What the widget should do on keyup
+    pub fn on_keyup(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::KeyUp, cb);
+    }
+
+    /// What the widget should do on close
+    pub fn on_close(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::Close, cb);
+    }
+
+    /// What the widget should do on move
+    pub fn on_move(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::Move, cb);
+    }
+
+    /// What the widget should do on shortcut
+    pub fn on_shortcut(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::Shortcut, cb);
+    }
+
+    /// What the widget should do on deactivate
+    pub fn on_deactivate(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::Deactivate, cb);
+    }
+
+    /// What the widget should do on activate
+    pub fn on_activate(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::Activate, cb);
+    }
+
+    /// What the widget should do on hide
+    pub fn on_hide(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::Hide, cb);
+    }
+
+    /// What the widget should do on show
+    pub fn on_show(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::Show, cb);
+    }
+
+    /// What the widget should do on paste
+    pub fn on_paste(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::Paste, cb);
+    }
+
+    /// What the widget should do on selection_clear
+    pub fn on_selection_clear(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::SelectionClear, cb);
+    }
+
+    /// What the widget should do on mousewheel
+    pub fn on_mousewheel(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::MouseWheel, cb);
+    }
+
+    /// What the widget should do on dnd_enter
+    pub fn on_dnd_enter(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::DndEnter, cb);
+    }
+
+    /// What the widget should do on dnd_drag
+    pub fn on_dnd_drag(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::DndDrag, cb);
+    }
+
+    /// What the widget should do on dnd_leave
+    pub fn on_dnd_leave(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::DndLeave, cb);
+    }
+
+    /// What the widget should do on dnd_release
+    pub fn on_dnd_release(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::DndRelease, cb);
+    }
+
+    /// What the widget should do on screen_config_chaged
+    pub fn on_screen_config_chaged(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::ScreenConfigChanged, cb);
+    }
+
+    /// What the widget should do on fullscreen
+    pub fn on_fullscreen(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::Fullscreen, cb);
+    }
+
+    /// What the widget should do on zoom_gesture
+    pub fn on_zoom_gesture(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::ZoomGesture, cb);
+    }
+
+    /// What the widget should do on zoom
+    pub fn on_zoom(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::ZoomEvent, cb);
+    }
+
+    /// What the widget should do on resize
+    pub fn on_resize(&mut self, cb: impl FnMut(&mut T) + 'static) {
+        self.on(Event::Resize, cb);
     }
 
     /// Initialize to position x, y
