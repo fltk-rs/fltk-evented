@@ -5,6 +5,7 @@ This crate provides a Listener widget which can basically wrap any fltk-rs widge
 
 ## Usage
 ```toml,no_run
+[dependencies]
 fltk = "1.2"
 fltk-evented = "0.1"
 ```
@@ -52,6 +53,47 @@ fn main() {
     app.run().unwrap();
 }
 ```
+
+Another aspect of the Listener widget is that it can be queried on whether it was triggered in the event loop, negating the need for a callback, and the hassle of sending difficult to move types to the closure.
+
+```rust
+use fltk::{app, button::Button, frame::Frame, group::Flex, prelude::*, window::Window};
+use fltk_evented::Listener;
+
+fn main() {
+    let a = app::App::default().with_scheme(app::Scheme::Gtk);
+    app::set_font_size(20);
+
+    let mut wind = Window::default()
+        .with_size(160, 200)
+        .center_screen()
+        .with_label("Counter");
+    let flex = Flex::default()
+        .with_size(120, 160)
+        .center_of_parent()
+        .column();
+    let but_inc: Listener<_> = Button::default().with_label("+").into();
+    let mut frame = Frame::default();
+    let but_dec: Listener<_> = Button::default().with_label("-").into();
+    flex.end();
+    wind.end();
+    wind.show();
+
+    let mut val = 0;
+
+    while a.wait() {
+        if but_inc.triggered() {
+            val += 1;
+        }
+
+        if but_dec.triggered() {
+            val -= 1;
+        }
+
+        frame.set_label(&val.to_string());
+    }
+}
+```
 */
 
 #![allow(clippy::needless_doctest_main)]
@@ -72,6 +114,7 @@ pub struct Listener<T: WidgetBase + WidgetExt> {
     #[allow(dead_code)]
     wid: T,
     events: Rc<RefCell<EventMap<T>>>,
+    trig: Rc<RefCell<bool>>,
 }
 
 impl<T: WidgetBase + WidgetExt + Default + 'static> From<T> for Listener<T> {
@@ -99,6 +142,7 @@ impl<T: WidgetBase + WidgetExt + Default + 'static> Listener<T> {
     /// The same constructor for fltk-rs widgets can be used for Listeners
     pub fn new<S: Into<Option<&'static str>>>(x: i32, y: i32, w: i32, h: i32, label: S) -> Self {
         let mut wid = T::new(x, y, w, h, label);
+        let trig = Rc::new(RefCell::new(false));
         let events: EventMap<T> = HashMap::new();
         let events = Rc::from(RefCell::from(events));
         wid.handle({
@@ -113,12 +157,18 @@ impl<T: WidgetBase + WidgetExt + Default + 'static> Listener<T> {
                 }
             }
         });
-        Self { wid, events }
+        wid.set_callback({
+            let trig = trig.clone();
+            move |_| {
+                *trig.borrow_mut() = true;
+            }});
+        Self { wid, events, trig }
     }
 
     fn from_widget(mut wid: T) -> Self {
         let events: EventMap<T> = HashMap::new();
         let events = Rc::from(RefCell::from(events));
+        let trig = Rc::new(RefCell::new(false));
         wid.handle({
             let events = events.clone();
             move |b, ev| {
@@ -131,12 +181,24 @@ impl<T: WidgetBase + WidgetExt + Default + 'static> Listener<T> {
                 }
             }
         });
-        Self { wid, events }
+        wid.set_callback({
+            let trig = trig.clone();
+            move |_| {
+                *trig.borrow_mut() = true;
+            }});
+        Self { wid, events, trig }
     }
 
     /// Construct a widget filling the parent
     pub fn default_fill() -> Self {
         Self::default().size_of_parent().center_of_parent()
+    }
+
+    /// Check whether a widget was triggered
+    pub fn triggered(&self) -> bool {
+        let curr = *self.trig.borrow();
+        *self.trig.borrow_mut() = false;
+        curr
     }
 
     /// What the widget should do on a custom event
