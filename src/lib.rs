@@ -94,6 +94,67 @@ fn main() {
     }
 }
 ```
+
+
+You can also check for other events in the event loop:
+```rust
+use fltk::{app, button::Button, enums::Color, frame::Frame, group::Flex, prelude::*, window::Window};
+use fltk_evented::Listener;
+
+fn main() {
+    let a = app::App::default().with_scheme(app::Scheme::Gtk);
+    app::set_font_size(20);
+
+    let mut wind = Window::default()
+        .with_size(160, 200)
+        .center_screen()
+        .with_label("Counter");
+    let flex = Flex::default()
+        .with_size(120, 160)
+        .center_of_parent()
+        .column();
+    let mut but_inc: Listener<_> = Button::default().with_label("+").into();
+    let mut frame = Frame::default();
+    let mut but_dec: Listener<_> = Button::default().with_label("-").into();
+    flex.end();
+    wind.end();
+    wind.show();
+
+    but_inc.on_hover(|b| {
+        b.set_color(Color::Red);
+    });
+
+    let mut val = 0;
+
+    while a.wait() {
+        if but_inc.triggered() {
+            val += 1;
+        }
+
+        if but_inc.hovered() {
+            but_inc.set_color(Color::White);
+        }
+
+        if but_inc.left() {
+            but_inc.set_color(Color::BackGround);
+        }
+
+        if but_dec.triggered() {
+            val -= 1;
+        }
+
+        if but_dec.hovered() {
+            but_dec.set_color(Color::White);
+        }
+
+        if but_dec.left() {
+            but_dec.set_color(Color::BackGround);
+        }
+
+        frame.set_label(&val.to_string());
+    }
+}
+```
 */
 
 #![allow(clippy::needless_doctest_main)]
@@ -115,6 +176,7 @@ pub struct Listener<T: WidgetBase + WidgetExt> {
     wid: T,
     events: Rc<RefCell<EventMap<T>>>,
     trig: Rc<RefCell<bool>>,
+    evented: Rc<RefCell<HashMap<i32, bool>>>,
 }
 
 impl<T: WidgetBase + WidgetExt + Default + 'static> From<T> for Listener<T> {
@@ -143,50 +205,90 @@ impl<T: WidgetBase + WidgetExt + Default + 'static> Listener<T> {
     pub fn new<S: Into<Option<&'static str>>>(x: i32, y: i32, w: i32, h: i32, label: S) -> Self {
         let mut wid = T::new(x, y, w, h, label);
         let trig = Rc::new(RefCell::new(false));
+        let mut evented = HashMap::new();
+        for i in 0..30 {
+            evented.insert(i, false);
+        }
+        let evented = Rc::from(RefCell::from(evented));
         let events: EventMap<T> = HashMap::new();
         let events = Rc::from(RefCell::from(events));
         wid.handle({
             let events = events.clone();
+            let evented = evented.clone();
             move |b, ev| {
-                if let Some(Some(cb)) = events.borrow_mut().get_mut(&(ev.bits())) {
+                let ret1 = if let Some(Some(cb)) = events.borrow_mut().get_mut(&(ev.bits())) {
                     cb(b);
                     b.redraw();
                     true
                 } else {
                     false
-                }
+                };
+                let ret2 = if let Some(t) = evented.borrow_mut().get_mut(&(ev.bits())) {
+                    *t = true;
+                    b.redraw();
+                    true
+                } else {
+                    false
+                };
+                ret1 || ret2
             }
         });
         wid.set_callback({
             let trig = trig.clone();
             move |_| {
                 *trig.borrow_mut() = true;
-            }});
-        Self { wid, events, trig }
+            }
+        });
+        Self {
+            wid,
+            events,
+            trig,
+            evented,
+        }
     }
 
     fn from_widget(mut wid: T) -> Self {
         let events: EventMap<T> = HashMap::new();
         let events = Rc::from(RefCell::from(events));
         let trig = Rc::new(RefCell::new(false));
+        let mut evented = HashMap::new();
+        for i in 0..30 {
+            evented.insert(i, false);
+        }
+        let evented = Rc::from(RefCell::from(evented));
         wid.handle({
             let events = events.clone();
+            let evented = evented.clone();
             move |b, ev| {
-                if let Some(Some(cb)) = events.borrow_mut().get_mut(&(ev.bits())) {
+                let ret1 = if let Some(Some(cb)) = events.borrow_mut().get_mut(&(ev.bits())) {
                     cb(b);
                     b.redraw();
                     true
                 } else {
                     false
-                }
+                };
+                let ret2 = if let Some(t) = evented.borrow_mut().get_mut(&(ev.bits())) {
+                    *t = true;
+                    b.redraw();
+                    true
+                } else {
+                    false
+                };
+                ret1 || ret2
             }
         });
         wid.set_callback({
             let trig = trig.clone();
             move |_| {
                 *trig.borrow_mut() = true;
-            }});
-        Self { wid, events, trig }
+            }
+        });
+        Self {
+            wid,
+            events,
+            trig,
+            evented,
+        }
     }
 
     /// Construct a widget filling the parent
@@ -198,6 +300,13 @@ impl<T: WidgetBase + WidgetExt + Default + 'static> Listener<T> {
     pub fn triggered(&self) -> bool {
         let curr = *self.trig.borrow();
         *self.trig.borrow_mut() = false;
+        curr
+    }
+
+    /// Check if an event was triggered
+    pub fn done(&self, ev: Event) -> bool {
+        let curr = *self.evented.borrow().get(&ev.bits()).unwrap();
+        *self.evented.borrow_mut().get_mut(&ev.bits()).unwrap() = false;
         curr
     }
 
@@ -323,8 +432,8 @@ impl<T: WidgetBase + WidgetExt + Default + 'static> Listener<T> {
         self.on(Event::DndRelease, cb);
     }
 
-    /// What the widget should do on screen_config_chaged
-    pub fn on_screen_config_chaged(&mut self, cb: impl FnMut(&mut T) + 'static) {
+    /// What the widget should do on screen_config_changed
+    pub fn on_screen_config_changed(&mut self, cb: impl FnMut(&mut T) + 'static) {
         self.on(Event::ScreenConfigChanged, cb);
     }
 
@@ -346,6 +455,146 @@ impl<T: WidgetBase + WidgetExt + Default + 'static> Listener<T> {
     /// What the widget should do on resize
     pub fn on_resize(&mut self, cb: impl FnMut(&mut T) + 'static) {
         self.on(Event::Resize, cb);
+    }
+
+    /// Return whether the widget was hovered
+    pub fn hovered(&self) -> bool {
+        self.done(Event::Enter)
+    }
+
+    /// Return whether the widget was left
+    pub fn left(&self) -> bool {
+        self.done(Event::Leave)
+    }
+
+    /// Return whether the widget was clicked
+    pub fn clicked(&self) -> bool {
+        self.done(Event::Push)
+    }
+
+    /// Return whether the widget was released
+    pub fn released(&self) -> bool {
+        self.done(Event::Released)
+    }
+
+    /// Return whether the widget was dragged
+    pub fn dragged(&self) -> bool {
+        self.done(Event::Drag)
+    }
+
+    /// Return whether the widget was focused
+    pub fn focused(&self) -> bool {
+        self.done(Event::Focus)
+    }
+
+    /// Return whether the widget was unfocused
+    pub fn unfocused(&self) -> bool {
+        self.done(Event::Unfocus)
+    }
+
+    /// Return whether the widget was keydowned
+    pub fn keydowned(&self) -> bool {
+        self.done(Event::KeyDown)
+    }
+
+    /// Return whether the widget was keyuped
+    pub fn keyuped(&self) -> bool {
+        self.done(Event::KeyUp)
+    }
+
+    /// Return whether the widget was closed
+    pub fn closed(&self) -> bool {
+        self.done(Event::Close)
+    }
+
+    /// Return whether the widget was moved
+    pub fn moved(&self) -> bool {
+        self.done(Event::Move)
+    }
+
+    /// Return whether the widget was shortcuted
+    pub fn shortcuted(&self) -> bool {
+        self.done(Event::Shortcut)
+    }
+
+    /// Return whether the widget was deactivated
+    pub fn deactivated(&self) -> bool {
+        self.done(Event::Deactivate)
+    }
+
+    /// Return whether the widget was activated
+    pub fn activated(&self) -> bool {
+        self.done(Event::Activate)
+    }
+
+    /// Return whether the widget was hiden
+    pub fn hiden(&self) -> bool {
+        self.done(Event::Hide)
+    }
+
+    /// Return whether the widget was showed
+    pub fn showed(&self) -> bool {
+        self.done(Event::Show)
+    }
+
+    /// Return whether the widget was pasted to
+    pub fn pasted_to(&self) -> bool {
+        self.done(Event::Paste)
+    }
+
+    /// Return whether the widget was selection_cleared
+    pub fn selection_cleared(&self) -> bool {
+        self.done(Event::SelectionClear)
+    }
+
+    /// Return whether the widget was mousewheeled
+    pub fn mousewheeled(&self) -> bool {
+        self.done(Event::MouseWheel)
+    }
+
+    /// Return whether the widget was dnd_entered
+    pub fn dnd_entered(&self) -> bool {
+        self.done(Event::DndEnter)
+    }
+
+    /// Return whether the widget was dnd_dragged
+    pub fn dnd_dragged(&self) -> bool {
+        self.done(Event::DndDrag)
+    }
+
+    /// Return whether the widget was dnd_left
+    pub fn dnd_left(&self) -> bool {
+        self.done(Event::DndLeave)
+    }
+
+    /// Return whether the widget was dnd_released
+    pub fn dnd_released(&self) -> bool {
+        self.done(Event::DndRelease)
+    }
+
+    /// Return whether the widget was screen_config_changed
+    pub fn screen_config_changed(&self) -> bool {
+        self.done(Event::ScreenConfigChanged)
+    }
+
+    /// Return whether the widget was fullscreened
+    pub fn fullscreened(&self) -> bool {
+        self.done(Event::Fullscreen)
+    }
+
+    /// Return whether the widget was zoom_gestured
+    pub fn zoom_gestured(&self) -> bool {
+        self.done(Event::ZoomGesture)
+    }
+
+    /// Return whether the widget was zoomed
+    pub fn zoomed(&self) -> bool {
+        self.done(Event::ZoomEvent)
+    }
+
+    /// Return whether the widget was resized
+    pub fn resized(&self) -> bool {
+        self.done(Event::Resize)
     }
 
     /// Initialize to position x, y
@@ -515,4 +764,3 @@ impl<T: WidgetBase + WidgetExt + Default + 'static> Listener<T> {
         self
     }
 }
-

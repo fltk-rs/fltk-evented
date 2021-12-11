@@ -1,6 +1,6 @@
 [package]
 name = "fltk-evented"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2018"
 authors = ["MoAlyousef <mohammed.alyousef@neurosrg.com>"]
 description = "Listener widgets for fltk-rs"
