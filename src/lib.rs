@@ -737,6 +737,44 @@ impl<T: WidgetBase + WidgetExt + Default + 'static> Listener<T> {
         self
     }
 
+    /// Initialize center of another widget on the x axis
+    pub fn center_x<W: WidgetExt>(mut self, w: &W) -> Self {
+        assert!(!w.was_deleted());
+        assert!(!self.was_deleted());
+        debug_assert!(
+            w.width() != 0 && w.height() != 0,
+            "center_of requires the size of the widget to be known!"
+        );
+        let sw = self.width() as f64;
+        let sh = self.height() as f64;
+        let ww = w.width() as f64;
+        let sx = (ww - sw) / 2.0;
+        let sy = self.y();
+        let wx = if w.as_window().is_some() { 0 } else { w.x() };
+        self.resize(sx as i32 + wx, sy, sw as i32, sh as i32);
+        self.redraw();
+        self
+    }
+
+    /// Initialize center of another widget on the y axis
+    pub fn center_y<W: WidgetExt>(mut self, w: &W) -> Self {
+        assert!(!w.was_deleted());
+        assert!(!self.was_deleted());
+        debug_assert!(
+            w.width() != 0 && w.height() != 0,
+            "center_of requires the size of the widget to be known!"
+        );
+        let sw = self.width() as f64;
+        let sh = self.height() as f64;
+        let wh = w.height() as f64;
+        let sx = self.x();
+        let sy = (wh - sh) / 2.0;
+        let wy = if w.as_window().is_some() { 0 } else { w.y() };
+        self.resize(sx, sy as i32 + wy, sw as i32, sh as i32);
+        self.redraw();
+        self
+    }
+
     /// Initialize to the size of another widget
     pub fn size_of<W: WidgetExt>(mut self, w: &W) -> Self {
         assert!(!w.was_deleted());
