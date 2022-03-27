@@ -1,4 +1,6 @@
-use fltk::{app, button::Button, enums::Color, frame::Frame, group::Flex, prelude::*, window::Window};
+use fltk::{
+    app, button::Button, enums::Color, frame::Frame, group::Flex, prelude::*, window::Window,
+};
 use fltk_evented::Listener;
 
 fn main() {

@@ -1,6 +1,6 @@
 [package]
 name = "fltk-evented"
-version = "0.1.5"
+version = "0.1.6"
 edition = "2018"
 authors = ["MoAlyousef <mohammed.alyousef@neurosrg.com>"]
 description = "Listener widgets for fltk-rs"
@@ -15,3 +15,8 @@ license = "MIT"
 
 [dependencies]
 fltk = "1.2"
+tokio = { version = "1", features = ["rt"], optional = true }
+async-std = { version = "1", optional = true }
+
+[features]
+default = []
