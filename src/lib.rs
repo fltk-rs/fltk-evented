@@ -6,8 +6,8 @@ This crate provides a Listener widget which can basically wrap any fltk-rs widge
 ## Usage
 ```toml
 [dependencies]
-fltk = "1.2"
-fltk-evented = "0.2"
+fltk = "1.4"
+fltk-evented = "0.3"
 ```
 
 ## Example
@@ -51,7 +51,9 @@ fn main() {
     }
 }
 ```
+*/
 
+#![cfg_attr(feature = "tokio", doc = r##"
 ## Async usage
 This crate provides an AsyncListener which can be used in async contexts. This requires enabling either the tokio or async-std features. You can check the examples directory for an example on usage.
 
@@ -95,16 +97,17 @@ async fn main() -> Result<(), reqwest::Error> {
     Ok(())
 }
 ```
-*/
+"##)]
 
 #![allow(clippy::needless_doctest_main)]
 
+mod base;
+pub use base::BaseListener;
+
 mod blocking;
-pub use blocking::*;
+pub use blocking::Listener;
 
 #[cfg(any(feature = "tokio", feature = "async-std"))]
 mod asynch;
 #[cfg(any(feature = "tokio", feature = "async-std"))]
-pub use asynch::*;
-
-
+pub use asynch::AsyncListener;
