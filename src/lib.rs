@@ -99,6 +99,8 @@ async fn main() -> Result<(), reqwest::Error> {
 
 #![allow(clippy::needless_doctest_main)]
 
+mod base;
+
 mod blocking;
 pub use blocking::*;
 
@@ -106,5 +108,3 @@ pub use blocking::*;
 mod asynch;
 #[cfg(any(feature = "tokio", feature = "async-std"))]
 pub use asynch::*;
-
-
