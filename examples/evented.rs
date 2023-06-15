@@ -1,18 +1,3 @@
-# fltk-evented
-
-This crate provides a Listener widget which can basically wrap any fltk-rs widget (implementing WidgetBase and WidgetExt)
- and provides an `triggered() -> bool` and `event() -> Event` interface, without requiring callbacks.
-
-## Usage
-```toml
-[dependencies]
-fltk = "1.4"
-fltk-evented = "0.4"
-```
-
-## Example
-
-```rust
 use fltk::{
     prelude::*, 
     app,
@@ -72,4 +57,3 @@ fn main() {
         }
     }
 }
-```
