@@ -6,7 +6,7 @@ This crate provides a Listener widget which can basically wrap any fltk-rs widge
 ```toml
 [dependencies]
 fltk = "1.4"
-fltk-evented = "0.4"
+fltk-evented = "0.3"
 ```
 
 ## Example
