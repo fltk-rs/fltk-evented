@@ -24,6 +24,7 @@ default = []
 
 [[example]]
 name = "tokio_ex"
+doc-scrape-examples = true
 required-features = [ "tokio" ]
 
 [[example]]
