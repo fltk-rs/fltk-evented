@@ -9,7 +9,8 @@ pub struct Trig {
     event: Rc<Cell<Event>>,
 }
 
-/// The blocking listener widget
+/// The blocking widget listener recieves both `triggered: bool` from [`Listener<T>::triggered()`],
+/// and [`Event`] from [`Listener<T>::event()`].
 pub type Listener<T> = BaseListener<T, Trig>;
 
 /// core constructor

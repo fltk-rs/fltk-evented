@@ -1,7 +1,8 @@
 # fltk-evented
 
-This crate provides a Listener widget which can basically wrap any fltk-rs widget (implementing WidgetBase and WidgetExt)
- and provides an `triggered() -> bool` and `event() -> Event` interface, without requiring callbacks.
+This crate provides Listener widgets both for sync and async
+ which can basically wrap any fltk-rs widget (implementing [WidgetBase](fltk::prelude::WidgetBase) and [WidgetExt](fltk::prelude::WidgetExt))
+ and provides methods `triggered() -> bool` and `event() -> Event` to handle events, without requiring callbacks.
 
 ## Usage
 ```toml

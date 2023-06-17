@@ -18,7 +18,8 @@ pub struct Trig {
     event: Arc<AtomicI32>,
 }
 
-/// The async listener widget
+/// The async widget listener recieves both `triggered: bool` from [`AsyncListener<T>::triggered()`],
+/// and [`Event`] from [`AsyncListener<T>::event()`].
 pub type AsyncListener<T> = BaseListener<T, Trig>;
 
 /// core constructor
