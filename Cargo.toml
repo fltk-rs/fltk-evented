@@ -11,7 +11,7 @@ categories = ["gui"]
 readme = "README.md"
 license = "MIT"
 
-[package.metadata."docs.rs"]
+[package.metadata.docs.rs]
 features = ["tokio"]
 
 [dependencies]
@@ -22,6 +22,20 @@ async-std = { version = "1", optional = true }
 [features]
 default = []
 
+[[example]]
+name = "tokio_ex"
+doc-scrape-examples = true
+required-features = [ "tokio" ]
+
+[[example]]
+name = "async_std_ex"
+required-features = [ "async-std" ]
+
 [dev-dependencies]
+# for doctest of feature tokio and example tokio_ex
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 reqwest = "0.11"
+
+# for example async_std_ex
+async-std = { version = "1", features = ["attributes"] }
+surf = "2"

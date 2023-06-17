@@ -6,7 +6,7 @@ This crate provides an AsyncListener which can be used in async contexts. This r
 
 ```rust
 "##,
-include_str!("../examples/tokio_ex/src/main.rs"),
+include_str!("../examples/tokio_ex.rs"),
 r##"
 ```
 "##))]
@@ -20,7 +20,7 @@ mod blocking;
 pub use blocking::Listener;
 
 #[cfg(all(feature = "tokio", feature = "async-std"))]
-compile_error!("Features `tokio` and `sync-std` are mutually exclusive.");
+compile_error!("Features `tokio` and `async-std` are mutually exclusive.");
 
 #[cfg(any(feature = "tokio", feature = "async-std"))]
 mod asynch;
