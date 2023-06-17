@@ -3,21 +3,22 @@ use fltk::{
     prelude::{WidgetBase, WidgetExt, WidgetType},
 };
 
-/// The base listener widget
-#[derive(Clone)]
+/// The base listener widget, wraps a fltk [`WidgetBase`].
+#[derive(Debug, Clone)]
 pub struct BaseListener<T: WidgetBase + WidgetExt, TRIG> {
     #[allow(dead_code)]
     pub(crate) wid: T,
     pub(crate) trig: TRIG,
 }
 
-/// `#[derive(Default)]` is not valid
+/// `#[derive(Default)]` won't register callbacks, so we must impl `Default` manually.
 impl<T: WidgetBase + WidgetExt + Default + Into<BaseListener<T, TRIG>>, TRIG> Default for BaseListener<T, TRIG> {
     fn default() -> Self {
         T::default().into()
     }
 }
 
+/// Used to call methods like [`WidgetExt::x`].
 impl<T: WidgetBase + WidgetExt, TRIG> std::ops::Deref for BaseListener<T, TRIG> {
     type Target = T;
 
@@ -26,30 +27,34 @@ impl<T: WidgetBase + WidgetExt, TRIG> std::ops::Deref for BaseListener<T, TRIG> 
     }
 }
 
+/// Used to call methods like [`WidgetExt::set_pos`].
 impl<T: WidgetBase + WidgetExt, TRIG> std::ops::DerefMut for BaseListener<T, TRIG> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.wid
     }
 }
 
-/// Constructors, depends on `impl From<T> for BaseListener<T, TRIG>`
+/// Constructors, depends on `impl From<T> for BaseListener<T, TRIG>`, see [`crate::blocking::Listener::from`]
 impl<T: WidgetBase + WidgetExt + Into<BaseListener<T, TRIG>>, TRIG> BaseListener<T, TRIG> {
+    /// Not recommanded, use [`Into<BaseListener>`] like `let btn: Listener<_> = btn.into();`
     pub fn from_widget(wid: T) -> Self {
         wid.into()
     }
 
-    /// The same constructor for fltk-rs widgets can be used for Listeners
+    /// Creates a new widget, takes an x, y coordinates, as well as a width and height, plus a title.
+    /// Same as [`WidgetBase::new`]
     pub fn new<S: Into<Option<&'static str>>>(x: i32, y: i32, w: i32, h: i32, label: S) -> Self {
         T::new(x, y, w, h, label).into()
     }
 
-    /// Construct a widget filling the parent
+    /// Construct a widget filling the parent.
+    /// Same as [`WidgetBase::default_fill`]
     pub fn default_fill() -> Self {
         T::default_fill().into()
     }
 }
 
-/// Builder functions, delegated to `WidgetBase` 
+/// Builder functions, delegated to [`WidgetBase`]
 impl<T: WidgetBase + WidgetExt, TRIG> BaseListener<T, TRIG> {
     /// Initialize to position x, y
     pub fn with_pos(mut self, x: i32, y: i32) -> Self {

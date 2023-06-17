@@ -1,19 +1,3 @@
-# fltk-evented
-
-This crate provides Listener widgets both for sync and async
- which can basically wrap any fltk-rs widget (implementing [WidgetBase](fltk::prelude::WidgetBase) and [WidgetExt](fltk::prelude::WidgetExt))
- and provides methods `triggered() -> bool` and `event() -> Event` to handle events, without requiring callbacks.
-
-## Usage
-```toml
-[dependencies]
-fltk = "1.4"
-fltk-evented = "0.4"
-```
-
-## Example
-
-```rust
 use fltk::{
     prelude::*, 
     app,
@@ -73,4 +57,3 @@ fn main() {
         }
     }
 }
-```
