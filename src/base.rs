@@ -4,7 +4,7 @@ use fltk::{
 };
 
 /// The base listener widget, wraps a fltk [`WidgetBase`].
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct BaseListener<T: WidgetBase + WidgetExt, TRIG> {
     #[allow(dead_code)]
     pub(crate) wid: T,

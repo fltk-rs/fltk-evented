@@ -4,6 +4,7 @@ use std::cell::Cell;
 use std::rc::Rc;
 use crate::base::BaseListener;
 
+#[derive(Debug, Clone)]
 pub struct Trig {
     triggered: Rc<Cell<bool>>,
     event: Rc<Cell<Event>>,

@@ -13,6 +13,7 @@ use tokio::spawn;
 #[cfg(feature = "async-std")]
 use async_std::task::spawn;
 
+#[derive(Debug, Clone)]
 pub struct Trig {
     triggered: Arc<AtomicBool>,
     event: Arc<AtomicI32>,
