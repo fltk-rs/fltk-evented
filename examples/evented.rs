@@ -45,13 +45,13 @@ fn main() {
         }
 
         match but_inc.event() {
-            Event::Enter => button_color(&mut but_inc, Color::White),
+            Event::Enter | Event::Move => button_color(&mut but_inc, Color::White),
             Event::Leave => button_color(&mut but_inc, Color::BackGround),
             _ => (),
         }
 
         match but_dec.event() {
-            Event::Enter => button_color(&mut but_dec, Color::White),
+            Event::Enter | Event::Move => button_color(&mut but_dec, Color::White),
             Event::Leave => button_color(&mut but_dec, Color::BackGround),
             _ => (),
         }
