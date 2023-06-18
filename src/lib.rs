@@ -1,3 +1,6 @@
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![cfg_attr(docsrs, allow(unused_attributes))]
+
 #![doc = include_str!("../README.md")]
 
 #![cfg_attr(feature = "tokio", doc = concat!(r##"
