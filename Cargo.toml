@@ -1,6 +1,6 @@
 [package]
 name = "fltk-evented"
-version = "0.4.1"
+version = "0.5.0"
 edition = "2021"
 authors = ["MoAlyousef <mohammed.alyousef@neurosrg.com>"]
 description = "Listener widgets for fltk-rs"
@@ -15,25 +15,18 @@ license = "MIT"
 default = []
 
 [dependencies]
-fltk = "1.4"
+fltk = "1.4.24"
 tokio = { version = "1", features = ["rt"], optional = true }
 async-std = { version = "1", optional = true }
 
-[dev-dependencies]
-# for doctest of feature tokio and example tokio_ex
-tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
-reqwest = "0.11"
-
-# for example async_std_ex
-async-std = { version = "1", features = ["attributes"] }
-surf = "2"
-
 [[example]]
+path = "examples/tokio_ex"
 name = "tokio_ex"
 doc-scrape-examples = true
 required-features = ["tokio"]
 
 [[example]]
+path = "examples/async_std_ex"
 name = "async_std_ex"
 required-features = ["async-std"]
 
