@@ -1,11 +1,11 @@
+use crate::base::BaseListener;
 use fltk::{
     app,
     enums::Event,
     prelude::{WidgetBase, WidgetExt},
 };
-use std::sync::atomic::{AtomicBool, Ordering, AtomicI32};
+use std::sync::atomic::{AtomicBool, AtomicI32, Ordering};
 use std::sync::Arc;
-use crate::base::BaseListener;
 
 #[cfg(feature = "tokio")]
 use tokio::spawn;
@@ -64,6 +64,9 @@ impl<T: WidgetBase + WidgetExt> AsyncListener<T> {
     /// Get an event the widget received,
     /// returns [`Event::NoEvent`] if no events received
     pub fn event(&self) -> Event {
-        self.trig.event.swap(Event::NoEvent.bits(), Ordering::Relaxed).into()
+        self.trig
+            .event
+            .swap(Event::NoEvent.bits(), Ordering::Relaxed)
+            .into()
     }
 }

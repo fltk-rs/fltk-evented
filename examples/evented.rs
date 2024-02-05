@@ -1,8 +1,11 @@
 use fltk::{
-    prelude::*, 
     app,
+    button::Button,
     enums::{Color, Event},
-    button::Button, frame::Frame, group::Flex, window::Window,
+    frame::Frame,
+    group::Flex,
+    prelude::*,
+    window::Window,
 };
 use fltk_evented::Listener;
 

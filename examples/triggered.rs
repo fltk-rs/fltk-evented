@@ -22,7 +22,7 @@ fn main() {
 
     let mut val = 0;
     frame.set_label(&val.to_string());
-    
+
     while a.wait() {
         if but_inc.triggered() {
             val += 1;

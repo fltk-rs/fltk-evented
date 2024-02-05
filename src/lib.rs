@@ -1,19 +1,16 @@
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 #![cfg_attr(docsrs, allow(unused_attributes))]
-
 #![doc = include_str!("../README.md")]
-
 #![cfg_attr(feature = "tokio", doc = concat!(r##"
 ## Async usage
 This crate provides an AsyncListener which can be used in async contexts. This requires enabling either the tokio or async-std features. You can check the examples directory for an example on usage.
 
 ```rust
 "##,
-include_str!("../examples/tokio_ex.rs"),
+include_str!("../examples/async_examples/tokio_ex/src/main.rs"),
 r##"
 ```
 "##))]
-
 #![allow(clippy::needless_doctest_main)]
 
 mod base;

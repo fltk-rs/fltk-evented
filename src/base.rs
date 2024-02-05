@@ -12,7 +12,9 @@ pub struct BaseListener<T: WidgetBase + WidgetExt, TRIG> {
 }
 
 /// `#[derive(Default)]` won't register callbacks, so we must impl `Default` manually.
-impl<T: WidgetBase + WidgetExt + Default + Into<BaseListener<T, TRIG>>, TRIG> Default for BaseListener<T, TRIG> {
+impl<T: WidgetBase + WidgetExt + Default + Into<BaseListener<T, TRIG>>, TRIG> Default
+    for BaseListener<T, TRIG>
+{
     fn default() -> Self {
         T::default().into()
     }

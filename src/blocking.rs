@@ -1,9 +1,9 @@
+use crate::base::BaseListener;
 use fltk::enums::Event;
 use fltk::prelude::{WidgetBase, WidgetExt};
 use std::cell::{Cell, RefCell};
-use std::rc::Rc;
-use crate::base::BaseListener;
 use std::collections::HashMap;
+use std::rc::Rc;
 
 type EventMap<T> = HashMap<i32, Option<Box<dyn FnMut(&mut T)>>>;
 
@@ -50,7 +50,11 @@ impl<T: WidgetBase + WidgetExt + 'static> From<T> for Listener<T> {
                 ret
             }
         });
-        let trig = Trig { triggered, event, events };
+        let trig = Trig {
+            triggered,
+            event,
+            events,
+        };
         Self { wid, trig }
     }
 }
@@ -70,7 +74,8 @@ impl<T: WidgetBase + WidgetExt> Listener<T> {
 
     /// What the widget should do on a custom event
     pub fn on(&mut self, ev: Event, cb: impl FnMut(&mut T) + 'static) {
-        self.trig.events
+        self.trig
+            .events
             .borrow_mut()
             .insert(ev.bits(), Some(Box::new(cb)));
     }
