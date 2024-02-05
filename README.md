@@ -2,7 +2,8 @@
 
 This crate provides Listener widgets both for sync and async
  which can basically wrap any fltk-rs widget (implementing [WidgetBase](fltk::prelude::WidgetBase) and [WidgetExt](fltk::prelude::WidgetExt))
- and provides methods `triggered() -> bool`, `event() -> Event` and `on_<event>(callback)`to handle events, without requiring callbacks.
+ and provides methods `triggered() -> bool` and `event() -> Event` to handle events in the event loop, without requiring callbacks.
+ It also provides `on_<event>(callback)` methods which simplify handling events whereas you would've had to use the widget's handle method directly. 
 
 ## Usage
 ```toml
@@ -11,7 +12,7 @@ fltk = "1.4"
 fltk-evented = "0.5"
 ```
 
-## Example
+## Examples
 
 ```rust
 use fltk::{
@@ -116,5 +117,48 @@ fn main() {
     });
 
     app.run().unwrap();
+}
+```
+
+## Async Examples
+fltk-evented can be used with either tokio or async-std to handle non-blocking async calls in the event loop. The following examples shows usage with tokio. Another example using async-std can be found in the examples directory:
+```rust,ignore
+use fltk::{prelude::*, *};
+use fltk_evented::AsyncListener;
+
+#[tokio::main]
+async fn main() -> Result<(), reqwest::Error> {
+    let mut buf = text::TextBuffer::default();
+    let a = app::App::default().with_scheme(app::Scheme::Gtk);
+    app::set_font_size(20);
+
+    let mut wind = window::Window::default()
+        .with_size(400, 300)
+        .center_screen()
+        .with_label("Counter");
+    let col = group::Pack::default()
+        .with_size(400, 300)
+        .center_of_parent()
+        .with_type(group::PackType::Vertical);
+    let mut editor = text::TextEditor::default().with_size(0, 240);
+    editor.set_buffer(buf.clone());
+    let getter: AsyncListener<_> = button::Button::default()
+        .with_label("Get")
+        .with_size(0, 60)
+        .into();
+    col.end();
+    wind.end();
+    wind.show();
+
+    while a.wait() {
+        if getter.triggered().await {
+            let text = reqwest::get("https://www.rust-lang.org")
+                .await?
+                .text()
+                .await?;
+            buf.set_text(&text);
+        }
+    }
+    Ok(())
 }
 ```
