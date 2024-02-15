@@ -19,6 +19,10 @@ pub use base::BaseListener;
 mod blocking;
 pub use blocking::Listener;
 
+pub fn event() -> bool {
+    fltk::app::event() != fltk::enums::Event::NoEvent
+}
+
 #[cfg(all(feature = "tokio", feature = "async-std"))]
 compile_error!("Features `tokio` and `async-std` are mutually exclusive.");
 
